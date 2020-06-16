@@ -88,6 +88,7 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             transform.SetParent(scene);                         // 父物建設為：場地
             BattleManager.instance.crystal -= crystalCost;      // 扣掉水晶
             BattleManager.instance.UpdateCrystal();             // 更新水晶
+            BattleManager.instance.handCardCount--;             // 手牌數量減一
         }
         else
         {

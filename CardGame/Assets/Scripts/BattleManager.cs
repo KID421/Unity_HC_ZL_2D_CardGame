@@ -179,7 +179,7 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// 手牌數量
     /// </summary>
-    private int handCardCount;
+    public int handCardCount;
 
     /// <summary>
     /// 顯示卡牌再移動到手上
@@ -202,14 +202,39 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f); // 停留 0.35 秒
 
+        // 爆牌
         if (handCardCount == 10)
         {
-            print("爆掉手牌");
-        }
+            card.GetChild(1).GetComponent<Image>().material = Instantiate(card.GetChild(1).GetComponent<Image>().material);
+            card.GetChild(0).GetChild(0).GetComponent<Image>().material = Instantiate(card.GetChild(0).GetChild(0).GetComponent<Image>().material);
 
+            Material m = card.GetChild(1).GetComponent<Image>().material;                   // 取得材質
+            Material m0 = card.GetChild(0).GetChild(0).GetComponent<Image>().material;      // 取得材質
+
+            m.SetFloat("Switch", 1);                        // 設定布林值
+            m0.SetFloat("Switch", 1);                       // 設定布林值
+            float a = 0;                                    // 透明度
+
+            // 隱藏所有文字子物件
+            Text[] texts = card.GetComponentsInChildren<Text>();
+
+            for (int i = 0; i < texts.Length; i++) texts[i].enabled = false;
+
+            while (m.GetFloat("AlphaClip") < 4)             // 當 透明度 < 4
+            {
+                a += 0.1f;                                  // 透明度 遞增
+                m.SetFloat("AlphaClip", a);                 // 設定浮點數
+                m0.SetFloat("AlphaClip", a);                // 設定浮點數
+                yield return null;
+            }
+
+            Destroy(card.gameObject);
+            battleDeck.RemoveAt(battleDeck.Count - 1);
+            handGameObject.RemoveAt(handGameObject.Count - 1);
+        }
+        // 進入手牌
         else
         {
-            // 進入手牌
             card.localScale = Vector3.one * 0.5f;   // 縮小
 
             while (card.anchoredPosition.y > -274)   // 當 Y > -275 執行移動
