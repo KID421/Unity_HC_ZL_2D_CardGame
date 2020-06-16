@@ -48,7 +48,12 @@ public class BattleManager : MonoBehaviour
     private bool myTurn;
     private int crystalTotal;
 
-    private void Start()
+    /// <summary>
+    /// 手牌數量
+    /// </summary>
+    public int handCardCount;
+
+    protected virtual void Start()
     {
         instance = this;
     }
@@ -176,10 +181,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 手牌數量
-    /// </summary>
-    private int handCardCount;
+    
 
     /// <summary>
     /// 顯示卡牌再移動到手上
@@ -202,9 +204,32 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f); // 停留 0.35 秒
 
+        // 爆牌
         if (handCardCount == 10)
         {
-            print("爆掉手牌");
+            card.GetChild(1).GetComponent<Image>().material = Instantiate(card.GetChild(1).GetComponent<Image>().material);
+            card.GetChild(1).GetComponent<Image>().material.SetFloat("Switch", 1);
+            card.GetChild(0).GetChild(0).GetComponent<Image>().material = Instantiate(card.GetChild(0).GetChild(0).GetComponent<Image>().material);
+            card.GetChild(0).GetChild(0).GetComponent<Image>().material.SetFloat("Switch", 1);
+            
+            float clip = 0;
+
+            Text[] texts = card.GetComponentsInChildren<Text>();
+
+            for (int i = 0; i < texts.Length; i++)
+            {
+                texts[i].enabled = false;
+            }
+
+            while (card.GetChild(1).GetComponent<Image>().material.GetFloat("AlphaClip") < 3)
+            {
+                clip += 0.1f;
+                card.GetChild(1).GetComponent<Image>().material.SetFloat("AlphaClip", clip);
+                card.GetChild(0).GetChild(0).GetComponent<Image>().material.SetFloat("AlphaClip", clip);
+                yield return null;
+            }
+
+            card.gameObject.SetActive(false);
         }
 
         else

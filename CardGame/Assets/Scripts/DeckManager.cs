@@ -35,7 +35,7 @@ public class DeckManager : MonoBehaviour
     /// </summary>
     public static DeckManager instance;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         // 牌組管理器實體物件 = 此腳本
         instance = this;
@@ -45,7 +45,7 @@ public class DeckManager : MonoBehaviour
         btnStart.onClick.AddListener(StartBattle);
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         Choose30Card();
     }
@@ -153,7 +153,7 @@ public class DeckManager : MonoBehaviour
     /// <summary>
     /// 洗牌
     /// </summary>
-    private void Shuffle()
+    protected void Shuffle()
     {
         // 執行 30 次
         for (int i = 0; i < deck.Count; i++)
