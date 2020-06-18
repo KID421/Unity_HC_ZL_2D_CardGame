@@ -61,7 +61,7 @@ public class DeckManager : MonoBehaviour
             {
                 for (int j = 1; j <= 15; j++)
                 {
-                    AddCard(j);
+                    AddCard(j, "玩家");
                 }
             }
         }
@@ -71,7 +71,7 @@ public class DeckManager : MonoBehaviour
     /// 添加選取的圖鑑卡牌至牌組內
     /// </summary>
     /// <param name="index">選取的圖鑑卡牌編號</param>
-    public void AddCard(int index)
+    public void AddCard(int index, string target)
     {
         if (deck.Count < 30)
         {
@@ -94,11 +94,11 @@ public class DeckManager : MonoBehaviour
                     temp = Instantiate(deckObject, deckContent).transform;
                     // 添加牌組物件腳本，讓按鈕有功能
                     temp.gameObject.AddComponent<DeckObject>().index = card.index;
-                    temp.name = "牌組：" + card.name;
+                    temp.name = "牌組：" + card.name + " - " + target;
                 }
                 else
                 {
-                    temp = GameObject.Find("牌組：" + card.name).transform;
+                    temp = GameObject.Find("牌組：" + card.name + " - " + target).transform;
                 }
 
                 temp.Find("消耗").GetComponent<Text>().text = card.cost.ToString();

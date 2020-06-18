@@ -9,8 +9,26 @@ public class NPCBattlerManager : BattleManager
         instanceNPC = this;
     }
 
-    private void RandomCard()
+    protected override void CheckCoin()
     {
-        //DeckManager.instance.deck
+        firstAttack = !BattleManager.instance.firstAttack;
+
+        int card = 3;
+
+        if (firstAttack)
+        {
+            crystalTotal = 1;
+            crystal = 1;
+            card = 4;
+        }
+
+        Crystal();
+
+        StartCoroutine(GetCard(card, 500, 100, 275, NPCDeckManager.instanceNPC));
+    }
+
+    public override void EndTurn()
+    {
+        BattleManager.instance.StartTurn(DeckManager.instance, -100, -275);
     }
 }

@@ -19,7 +19,7 @@ public class DeckObject : MonoBehaviour
     /// </summary>
     public void AddCard()
     {
-        DeckManager.instance.AddCard(index);
+        DeckManager.instance.AddCard(index, "玩家");
     }
 
     /// <summary>

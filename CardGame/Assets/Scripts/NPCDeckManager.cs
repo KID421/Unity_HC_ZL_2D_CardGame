@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class NPCDeckManager : DeckManager
 {
@@ -18,14 +19,20 @@ public class NPCDeckManager : DeckManager
 
     private void RandomAddCard()
     {
-        for (int i = 0; i < 2; i++)
+        while (deck.Count < 30)
         {
-            for (int j = 1; j <= 15; j++)
+            int r = Random.Range(1, GetCard.instance.cards.Length + 1);
+
+            CardData card = GetCard.instance.cards[r - 1];
+
+            List<CardData> sameCard = deck.FindAll(c => c.Equals(card));
+
+            if (sameCard.Count < 2)
             {
-                AddCard(j);
+                AddCard(r, "NPC");
             }
         }
 
-        Invoke("Shuffle", 3);
+        Invoke("Shuffle", 1);
     }
 }
