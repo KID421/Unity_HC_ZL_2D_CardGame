@@ -35,7 +35,9 @@ public class DeckManager : MonoBehaviour
     /// </summary>
     public static DeckManager instance;
 
-    private void Awake()
+    // protected 保護：允許子類別使用成員
+    // virtual   虛擬：允許子類別用 override 覆寫
+    protected virtual void Awake()
     {
         // 牌組管理器實體物件 = 此腳本
         instance = this;
@@ -45,24 +47,30 @@ public class DeckManager : MonoBehaviour
         btnStart.onClick.AddListener(StartBattle);
     }
 
-    private void Update()
+    protected virtual void Update()
     {
-        Choose30Card();
+        if (Input.GetKeyDown(KeyCode.Alpha1)) Choose30Card();
     }
 
     /// <summary>
     /// 自動選 30 張
     /// </summary>
-    private void Choose30Card()
+    protected virtual void Choose30Card()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        while (deck.Count < 30)
         {
-            for (int i = 0; i < 2; i++)
+            int r = Random.Range(1, GetCard.instance.cards.Length + 1);
+
+            // 選取的卡牌
+            CardData card = GetCard.instance.cards[r - 1];
+
+            // => 黏巴達 Lambda 符號 C# 7 版新符號
+            // 牌組.尋找全部(卡牌 => 卡牌.等於(選取的卡牌))
+            List<CardData> sameCard = deck.FindAll(c => c.Equals(card));
+
+            if (sameCard.Count < 2)
             {
-                for (int j = 1; j <= 15; j++)
-                {
-                    AddCard(j);
-                }
+                AddCard(r);
             }
         }
     }
