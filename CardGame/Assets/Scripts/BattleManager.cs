@@ -47,10 +47,15 @@ public class BattleManager : MonoBehaviour
 
     private bool myTurn;
     protected int crystalTotal;
+    protected string sceneName;
+    protected float pos;
 
     protected virtual void Start()
     {
         instance = this;
+
+        sceneName = "我方場地";
+        pos = 30;
     }
 
     /// <summary>
@@ -71,7 +76,10 @@ public class BattleManager : MonoBehaviour
         crystalTotal = Mathf.Clamp(crystalTotal, 1, 10);    // 夾住最大水晶數量
         crystal = crystalTotal;
         Crystal();
-        StartCoroutine(GetCard(1, DeckManager.instance, -200, -275));
+        if (sceneName.Contains("NPC"))
+            StartCoroutine(GetCard(1, NPCDeckManager.instanceNPC, 200, 275));
+        else
+            StartCoroutine(GetCard(1, DeckManager.instance, -200, -275));
     }
 
     /// <summary>
@@ -189,6 +197,8 @@ public class BattleManager : MonoBehaviour
     {
         RectTransform card = handGameObject[handGameObject.Count - 1].GetComponent<RectTransform>();       // 取得手牌最後一張[數量 - 1]
 
+        if (sceneName.Contains("NPC")) card.transform.Find("卡背").gameObject.SetActive(true);                // NPC 顯示卡背
+
         // 進入右手邊中間位置
         card.SetParent(canvas);                 // 將父物件設為畫布
         card.anchorMin = Vector2.one * 0.5f;    // 設定中心點
@@ -206,6 +216,10 @@ public class BattleManager : MonoBehaviour
         // 爆牌
         if (handCardCount == 10)
         {
+            card.GetChild(7).GetComponent<Image>().material = Instantiate(card.GetChild(7).GetComponent<Image>().material);
+            Material m1 = card.GetChild(7).GetComponent<Image>().material;                   // 取得材質
+            m1.SetFloat("Switch", 1);                        // 設定布林值
+
             card.GetChild(1).GetComponent<Image>().material = Instantiate(card.GetChild(1).GetComponent<Image>().material);
             card.GetChild(0).GetChild(0).GetComponent<Image>().material = Instantiate(card.GetChild(0).GetChild(0).GetComponent<Image>().material);
 
@@ -226,6 +240,7 @@ public class BattleManager : MonoBehaviour
                 a += 0.1f;                                  // 透明度 遞增
                 m.SetFloat("AlphaClip", a);                 // 設定浮點數
                 m0.SetFloat("AlphaClip", a);                // 設定浮點數
+                m1.SetFloat("AlphaClip", a);                // 設定浮點數
                 yield return null;
             }
 
@@ -252,6 +267,12 @@ public class BattleManager : MonoBehaviour
 
             card.SetParent(handArea);                   // 設定父物件為手牌區域
             card.gameObject.AddComponent<HandCard>();   // 添加手牌腳本 - 可拖拉
+            card.gameObject.GetComponent<HandCard>().sceneName = sceneName;
+            card.gameObject.GetComponent<HandCard>().pos = pos;
+            if (sceneName.Contains("NPC"))
+                card.gameObject.GetComponent<HandCard>().battle = NPCBattleManager.instanceNPC;
+            else
+                card.gameObject.GetComponent<HandCard>().battle = BattleManager.instance;
             handCardCount++;                            // 手牌數量遞增
         }
     }

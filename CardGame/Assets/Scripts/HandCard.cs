@@ -31,6 +31,15 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     /// </summary>
     private int crystalCost;
 
+    /// <summary>
+    /// 場景名稱
+    /// </summary>
+    public string sceneName;
+    /// <summary>
+    /// 手牌脫拉進場地位置
+    /// </summary>
+    public float pos;
+
     private void Start()
     {
         rect = GetComponent<RectTransform>();
@@ -38,8 +47,8 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         // 123.ToString();   數值轉字串
         // int.Parse("123"); 字串轉數值
         crystalCost = int.Parse(transform.Find("消耗").GetComponent<Text>().text);
-
-        scene = GameObject.Find("我方場地").transform;
+        // 取得場地物件
+        scene = GameObject.Find(sceneName).transform;
     }
 
     /// <summary>
@@ -67,7 +76,12 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     /// </summary>
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (rect.anchoredPosition.y >= 30)      // 如果放開時 Y 軸 >= 30
+        bool con;
+
+        if (sceneName.Contains("NPC")) con = rect.anchoredPosition.y <= pos;    // NPC
+        else con = rect.anchoredPosition.y >= pos;                              // 玩家
+
+        if (con)      // 如果放開時 Y 軸 >= 30
         {
             CheckCrystal();
         }
@@ -77,18 +91,24 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         }
     }
 
+    public BattleManager battle;
+
     /// <summary>
     /// 檢查水晶數量
     /// </summary>
     private void CheckCrystal()
     {
-        if (crystalCost <= BattleManager.instance.crystal)
+        if (crystalCost <= battle.crystal)
         {
             inScene = true;                                     // 是否在場景上 = 是
             transform.SetParent(scene);                         // 父物建設為：場地
-            BattleManager.instance.crystal -= crystalCost;      // 扣掉水晶
-            BattleManager.instance.UpdateCrystal();             // 更新水晶
-            BattleManager.instance.handCardCount--;             // 手牌數量減一
+            battle.crystal -= crystalCost;                      // 扣掉水晶
+            battle.UpdateCrystal();                             // 更新水晶
+            battle.handCardCount--;                             // 手牌數量減一
+
+            gameObject.AddComponent<AttackCard>();              // 添加元件<攻擊卡牌>
+
+            if (sceneName.Contains("NPC")) transform.Find("卡背").gameObject.SetActive(false);    // NPC 關掉卡背
         }
         else
         {
