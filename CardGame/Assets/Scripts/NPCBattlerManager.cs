@@ -7,6 +7,9 @@ public class NPCBattlerManager : BattleManager
     protected override void Start()
     {
         instanceNPC = this;
+
+        scenePos = -270;
+        player = false;
     }
 
     protected override void CheckCoin()

@@ -11,6 +11,16 @@ using UnityEngine.EventSystems;
 public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     /// <summary>
+    /// 是否為玩家
+    /// </summary>
+    public bool player = true;
+
+    /// <summary>
+    /// 場景卡牌位置
+    /// </summary>
+    public int scenePos;
+
+    /// <summary>
     /// 卡牌座標資訊
     /// </summary>
     private RectTransform rect;
@@ -67,7 +77,18 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     /// </summary>
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (rect.anchoredPosition.y >= 30)      // 如果放開時 Y 軸 >= 30
+        bool con;
+
+        if (player)
+        {
+            con = rect.anchoredPosition.y >= scenePos;
+        }
+        else
+        {
+            con = rect.anchoredPosition.y <= scenePos;
+        }
+
+        if (con)      // 如果放開時 Y 軸 >= 30
         {
             CheckCrystal();
         }

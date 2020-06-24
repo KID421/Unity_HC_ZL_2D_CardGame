@@ -48,6 +48,9 @@ public class BattleManager : MonoBehaviour
     private bool myTurn;
     protected int crystalTotal;
 
+    protected int scenePos;
+    protected bool player;
+
     /// <summary>
     /// 手牌數量
     /// </summary>
@@ -56,6 +59,9 @@ public class BattleManager : MonoBehaviour
     protected virtual void Start()
     {
         instance = this;
+
+        scenePos = 30;
+        player = true;
     }
 
     /// <summary>
@@ -254,6 +260,8 @@ public class BattleManager : MonoBehaviour
 
             card.SetParent(handArea);                   // 設定父物件為手牌區域
             card.gameObject.AddComponent<HandCard>();   // 添加手牌腳本 - 可拖拉
+            card.gameObject.GetComponent<HandCard>().scenePos = scenePos;
+            card.gameObject.GetComponent<HandCard>().player = player;
             handCardCount++;                            // 手牌數量遞增
         }
     }
