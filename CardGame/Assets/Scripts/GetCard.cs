@@ -32,7 +32,7 @@ public class GetCard : MonoBehaviour
         loadingPanel.blocksRaycasts = true;     // 啟動遮擋
 
         // 網路要求 www = 網路要求.Post("網址", "")
-        UnityWebRequest www = UnityWebRequest.Post("https://script.google.com/macros/s/AKfycbw5tzw4smBcz6qqilN7odl11FelAK52gfzenMWBCubCWgLozV0/exec", "");
+        UnityWebRequest www = UnityWebRequest.PostWwwForm("https://script.google.com/macros/s/AKfycbzSXF5ruHhoOTfulCHmemuA0vgS9Psa0yqN3lxLxEx23UcWUVdWAy8-YzxUqzVh7hW_/exec", "");
         // 等待 網路要求時間
         // yield return www.SendWebRequest();
 
